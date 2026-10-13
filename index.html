@@ -158,7 +158,7 @@
       <p class="tiny-hint">psst… ada nombor tertentu yang menyimpan reaksi rahsia 👀</p>
     </section>
   </main>
-  <footer>dibuat oleh <span class="heart"></span> chat gpt plus</footer>
+  <footer>dibuat dengan <span class="heart">♥</span> dan sedikit contengan</footer>
 
   <div id="egg-overlay" class="egg-overlay" role="dialog" aria-modal="true" aria-labelledby="egg-title" aria-describedby="egg-desc">
     <section id="egg-card" class="egg-card">
@@ -304,13 +304,14 @@
           gameOver = true;
           setMessage('YESSS! Nombor rahsianya ' + secret + '! Kamu berjaya dalam ' + attempts + ' percubaan 🎉', 'good');
           if (best === null || attempts < best) saveBest(attempts);
+          // Easter egg hanya muncul jika nombor yang diteka betul-betul nombor rahsia.
+          triggerEgg(secret);
         } else if (guess < secret) {
           setMessage('Terlalu kecil! Cuba nombor yang lebih tinggi ↑', 'hint');
         } else {
           setMessage('Terlalu besar! Cuba nombor yang lebih rendah ↓', 'hint');
         }
         input.value = '';
-        triggerEgg(guess);
         if (!overlay.classList.contains('show')) input.focus();
       });
 
