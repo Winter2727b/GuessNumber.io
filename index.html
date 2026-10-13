@@ -88,7 +88,8 @@
     footer .heart { color: #d88b82; }
 
     /* Secret reaction layer */
-    .egg-overlay { position: fixed; inset: 0; padding: 20px; display: grid; place-items: center; background: rgba(42, 44, 50, .3); backdrop-filter: blur(3px); z-index: 10; opacity: 0; visibility: hidden; transition: opacity .2s, visibility .2s; }
+    /* Avoid backdrop-filter: full-screen blur is costly on many mobile GPUs. */
+    .egg-overlay { position: fixed; inset: 0; padding: 20px; display: grid; place-items: center; background: rgba(42, 44, 50, .48); z-index: 10; opacity: 0; visibility: hidden; transition: opacity .18s, visibility .18s; }
     .egg-overlay.show { opacity: 1; visibility: visible; }
     .egg-card { width: min(100%, 440px); padding: 30px 25px 24px; text-align: center; background: var(--paper); border: 2px solid var(--ink); border-radius: 17px 10px 20px 12px; box-shadow: 7px 7px 0 var(--ink); position: relative; transform: translateY(14px) rotate(-1deg) scale(.96); transition: transform .25s cubic-bezier(.2,.9,.3,1.2); }
     .egg-overlay.show .egg-card { transform: translateY(0) rotate(-1deg) scale(1); }
@@ -101,20 +102,27 @@
     .effect-flash { animation: wobble .65s ease-in-out; }
     .effect-sixseven .egg-emoji { animation: sixSeven .7s ease-in-out infinite alternate; }
     .effect-si u { text-decoration-color: #f0bd49; text-decoration-thickness: 5px; text-underline-offset: 4px; }
-    .burst { position: fixed; z-index: 15; pointer-events: none; font-size: 1.7rem; animation: burstOut 1.1s ease-out forwards; }
+    .burst { position: fixed; z-index: 15; pointer-events: none; font-size: 1.5rem; animation: burstOut 1s ease-out forwards; }
     @keyframes eggBounce { from { transform: translateY(0) rotate(-3deg) scale(1); } to { transform: translateY(-7px) rotate(4deg) scale(1.06); } }
     @keyframes sixSeven { from { transform: rotate(-12deg) scale(.92); } to { transform: rotate(12deg) scale(1.13); } }
     @keyframes wobble { 0%,100% { transform: rotate(0); } 25% { transform: rotate(-1.5deg) translateX(-3px); } 75% { transform: rotate(1.5deg) translateX(3px); } }
     @keyframes burstOut { 0% { opacity: 0; transform: translate(0,0) scale(.5) rotate(0); } 12% { opacity: 1; } 100% { opacity: 0; transform: translate(var(--dx), var(--dy)) scale(1.3) rotate(110deg); } }
     @media (max-width: 520px) {
-      body { padding: 21px 11px 26px; }
-      .notebook { padding-top: 35px; padding-right: 19px; padding-bottom: 28px; padding-left: 40px; background-image: linear-gradient(to right, transparent 0, transparent 25px, rgba(230, 133, 133, .55) 26px, transparent 27px), repeating-linear-gradient(to bottom, transparent 0, transparent 31px, var(--line) 32px, transparent 33px); }
+      body { padding: 21px 11px 26px; background-size: 12px 12px; }
+      .notebook { padding-top: 35px; padding-right: 19px; padding-bottom: 28px; padding-left: 40px; background-image: linear-gradient(to right, transparent 0, transparent 25px, rgba(230, 133, 133, .55) 26px, transparent 27px), repeating-linear-gradient(to bottom, transparent 0, transparent 31px, var(--line) 32px, transparent 33px); box-shadow: 4px 5px 0 #e4d8c2, 0 8px 18px rgba(68, 57, 39, .12); }
+      .egg-card { box-shadow: 4px 4px 0 var(--ink); }
       .notebook::before { left: 8px; }
       .flower { left: 1%; top: 4px; font-size: 1.7rem; }
       .star { right: 1%; top: 4px; font-size: 1.8rem; }
       .squiggle { top: 86px; right: 4%; }
       .game { margin-top: 27px; }
       .stats { gap: 17px; }
+    }
+    /* Touch screens do not need hover transforms or animated focus rotation. */
+    @media (hover: none) {
+      input:focus { transform: none; }
+      button:hover { transform: none; box-shadow: 3px 3px 0 var(--ink); }
+      button:active { transform: translate(1px, 1px); box-shadow: 2px 2px 0 var(--ink); }
     }
     @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; transition-duration: .01ms !important; } }
   </style>
@@ -208,20 +216,43 @@
         best = value; bestEl.textContent = String(value);
         try { localStorage.setItem('notebook-number-best', String(value)); } catch (_) { /* storage may be unavailable */ }
       }
+      function createGuessChip(guess) {
+        const chip = document.createElement('span');
+        chip.className = 'guess-chip';
+        chip.textContent = String(guess);
+        return chip;
+      }
       function renderGuesses() {
         guessesEl.replaceChildren();
-        if (!guesses.length) { guessesEl.textContent = 'Tebakanmu akan muncul di sini ✎'; return; }
-        const label = document.createElement('span'); label.textContent = 'Sejarah: '; guessesEl.appendChild(label);
-        guesses.forEach((guess) => {
-          const chip = document.createElement('span'); chip.className = 'guess-chip'; chip.textContent = String(guess); guessesEl.appendChild(chip);
-        });
+        if (!guesses.length) {
+          guessesEl.textContent = 'Tebakanmu akan muncul di sini ✎';
+          return;
+        }
+        const fragment = document.createDocumentFragment();
+        const label = document.createElement('span');
+        label.textContent = 'Sejarah: ';
+        fragment.appendChild(label);
+        guesses.forEach((guess) => fragment.appendChild(createGuessChip(guess)));
+        guessesEl.appendChild(fragment);
+      }
+      // Append only the latest guess instead of rebuilding the whole history.
+      function addGuess(guess) {
+        if (guesses.length === 1) {
+          guessesEl.replaceChildren();
+          const label = document.createElement('span');
+          label.textContent = 'Sejarah: ';
+          guessesEl.appendChild(label);
+        }
+        guessesEl.appendChild(createGuessChip(guess));
       }
       function setMessage(text, type = '') {
         message.textContent = text;
         message.className = 'message' + (type ? ' ' + type : '');
       }
       function popConfetti(items) {
-        const count = 14;
+        // Keep the effect light on phones and respect reduced-motion settings.
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+        const count = window.matchMedia('(max-width: 520px)').matches ? 6 : 10;
         for (let i = 0; i < count; i++) {
           const bit = document.createElement('span');
           bit.className = 'burst';
@@ -231,7 +262,7 @@
           bit.style.setProperty('--dx', ((Math.random() - .5) * 260) + 'px');
           bit.style.setProperty('--dy', ((Math.random() - .5) * 240) + 'px');
           document.body.appendChild(bit);
-          window.setTimeout(() => bit.remove(), 1200);
+          window.setTimeout(() => bit.remove(), 1050);
         }
       }
       function triggerEgg(number) {
@@ -267,7 +298,7 @@
         attempts++;
         guesses.push(guess);
         attemptsEl.textContent = String(attempts);
-        renderGuesses();
+        addGuess(guess);
 
         if (guess === secret) {
           gameOver = true;
