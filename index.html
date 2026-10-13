@@ -125,7 +125,69 @@
       button:active { transform: translate(1px, 1px); box-shadow: 2px 2px 0 var(--ink); }
     }
     @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; transition-duration: .01ms !important; } }
-  </style>
+  
+    /* New feature controls, dialogs, timer and mobile touch targets */
+    [hidden] { display: none !important; }
+    .feature-controls, .bottom { display: flex; justify-content: center; align-items: center; gap: 10px; margin-top: 18px; flex-wrap: wrap; }
+    .feature-controls .secondary, .bottom .secondary { min-height: 46px; }
+    .stats { flex-wrap: wrap; row-gap: 10px; }
+    .stat-pill { display: inline-flex; align-items: center; gap: 5px; padding: 7px 11px; border: 1px dashed #d4c7b3; border-radius: 10px; background: rgba(255,255,255,.54); }
+    .timer-panel { margin: 16px auto 0; max-width: 440px; padding: 12px 14px; border: 1.5px dashed #d5b969; border-radius: 13px 7px 12px 8px; background: rgba(251,236,188,.45); display: flex; align-items: center; flex-wrap: wrap; gap: 8px 12px; text-align: left; }
+    .timer-panel strong { margin-left: auto; font-size: 1.12rem; font-variant-numeric: tabular-nums; }
+    .timer-panel small { flex-basis: 100%; color: #7e796b; line-height: 1.4; }
+    .timer-track { flex-basis: 100%; height: 8px; background: #e8ddc7; border-radius: 999px; overflow: hidden; }
+    .timer-track span { display: block; height: 100%; width: 100%; background: #8eaaa0; border-radius: inherit; transition: width .2s linear, background .2s; }
+    .timer-panel.urgent { border-color: #cf7771; background: #fff0ed; animation: timerPulse .7s ease-in-out infinite alternate; }
+    .timer-panel.urgent .timer-track span { background: #cf7771; }
+    .modal-overlay { position: fixed; inset: 0; padding: 16px; display: grid; place-items: center; background: rgba(42,44,50,.52); z-index: 20; opacity: 0; visibility: hidden; transition: opacity .18s, visibility .18s; overflow-y: auto; }
+    .modal-overlay.show { opacity: 1; visibility: visible; }
+    .modal-card { width: min(100%, 500px); max-height: min(86vh, 760px); overflow-y: auto; padding: 25px clamp(18px, 5vw, 28px) 22px; text-align: center; background: var(--paper); border: 2px solid var(--ink); border-radius: 17px 10px 20px 12px; box-shadow: 7px 7px 0 var(--ink); position: relative; transform: translateY(12px) scale(.97); transition: transform .22s ease; }
+    .modal-overlay.show .modal-card { transform: translateY(0) scale(1); }
+    .trophy { font-size: clamp(3.8rem, 15vw, 5.3rem); line-height: 1.1; animation: trophyPop .7s cubic-bezier(.2,.9,.3,1.3) both; }
+    .modal-kicker { margin: 8px 0 4px; color: #898176; font-size: .75rem; text-transform: uppercase; letter-spacing: .15em; }
+    .modal-title { margin: 5px 0 9px; font-size: clamp(1.5rem, 6vw, 2.2rem); line-height: 1.2; }
+    .modal-copy { max-width: 390px; margin: 0 auto 16px; color: #6e747b; line-height: 1.55; }
+    .modal-actions { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
+    .modal-actions button { min-height: 48px; }
+    .achievement-preview { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin: 13px 0; }
+    .achievement-tag { display: inline-flex; align-items: center; gap: 6px; padding: 7px 10px; border-radius: 10px; border: 1px solid #d9c58c; background: #fff4cf; font-size: .83rem; }
+    .collection-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin: 18px 0; text-align: left; }
+    .collection-item { min-width: 0; border: 1px dashed #d4c7b3; background: rgba(255,255,255,.62); border-radius: 12px; padding: 12px; }
+    .collection-item.found { border-color: #9fbd9b; background: rgba(214,235,207,.44); }
+    .collection-emoji { font-size: 1.7rem; display: block; margin-bottom: 6px; }
+    .collection-item strong { display: block; font-size: .9rem; line-height: 1.3; }
+    .collection-item p { margin: 5px 0 0; color: #737981; font-size: .78rem; line-height: 1.4; overflow-wrap: anywhere; }
+    .collection-count { font-size: .85rem; color: #6e747b; }
+    .bottom .primary-next { background: #b9d7b5; }
+    button[aria-pressed="true"] { background: #d6ebcf; }
+    .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+    @keyframes trophyPop { 0% { transform: translateY(8px) scale(.55) rotate(-12deg); opacity: .25; } 70% { transform: translateY(-5px) scale(1.12) rotate(5deg); } 100% { transform: translateY(0) scale(1) rotate(0); opacity: 1; } }
+    @keyframes timerPulse { from { box-shadow: 0 0 0 rgba(207,119,113,0); } to { box-shadow: 0 0 0 4px rgba(207,119,113,.12); } }
+    @media (max-width: 520px) {
+      body { padding: 16px 8px 24px; }
+      .notebook { width: 100%; padding-left: 38px; padding-right: 15px; }
+      .game { width: 100%; margin-top: 25px; }
+      .prompt { font-size: 1rem; }
+      form { flex-direction: column; align-items: stretch; gap: 12px; }
+      input[type="number"] { width: 100%; min-height: 54px; font-size: 1.25rem; }
+      form button { width: 100%; min-height: 54px; }
+      .feature-controls { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+      .feature-controls button { padding: 9px 8px; font-size: .83rem; min-height: 48px; }
+      .bottom { display: grid; grid-template-columns: 1fr; gap: 9px; }
+      .bottom button { width: 100%; min-height: 49px; }
+      .stats { gap: 8px; justify-content: space-around; }
+      .stat-pill { flex: 1 1 40%; justify-content: center; font-size: .82rem; }
+      .collection-grid { grid-template-columns: 1fr; }
+      .modal-card { padding-top: 23px; }
+      .modal-actions { flex-direction: column; }
+      .modal-actions button { width: 100%; }
+      .timer-panel { align-items: center; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .trophy, .timer-panel.urgent { animation: none !important; }
+    }
+
+</style>
 </head>
 <body>
   <p class="top-note">✎ catatan kecil hari ini ✎</p>
@@ -144,21 +206,39 @@
       <p class="prompt">Nombor berapa agaknya?</p>
       <div class="range">✦ antara 1 hingga 100 ✦</div>
       <form id="guess-form">
-        <label class="sr-only" for="guess-input" style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;">Masukkan tekaan nombor</label>
-        <input id="guess-input" type="number" inputmode="numeric" min="1" max="100" placeholder="???" autocomplete="off" required />
+        <label class="sr-only" for="guess-input">Masukkan tekaan nombor</label>
+        <input id="guess-input" type="number" inputmode="numeric" min="1" max="100" placeholder="???" autocomplete="off" required aria-label="Masukkan nombor antara 1 hingga 100" />
         <button type="submit">Teka! ↗</button>
       </form>
       <div id="message" class="message" role="status" aria-live="polite">Tulis nombor pilihanmu dan kita lihat petunjuknya…</div>
+
+      <div id="timer-panel" class="timer-panel" hidden aria-live="polite">
+        <span>⏱️ Masa berbaki</span>
+        <strong id="timer-value">30s</strong>
+        <div class="timer-track" aria-hidden="true"><span id="timer-progress"></span></div>
+        <small id="timer-note">Pemasa bermula selepas tekaan pertama yang sah.</small>
+      </div>
+
       <div class="stats" aria-label="Statistik permainan">
-        <span>Percubaan: <strong id="attempts">0</strong></span>
-        <span>Best: <strong id="best">—</strong></span>
+        <span class="stat-pill">✎ Percubaan: <strong id="attempts">0</strong></span>
+        <span class="stat-pill">🏅 Best: <strong id="best">—</strong></span>
+        <span class="stat-pill">🔥 Winning streak: <strong id="streak">0</strong></span>
       </div>
       <div id="guesses" class="guesses" aria-label="Sejarah tekaan">Tebakanmu akan muncul di sini ✎</div>
-      <div class="bottom"><button id="reset-btn" class="secondary" type="button">↻ Main lagi</button></div>
-      <p class="tiny-hint">psst… ada nombor tertentu yang menyimpan reaksi rahsia 👀</p>
+
+      <div class="feature-controls" aria-label="Tetapan permainan">
+        <button id="timer-toggle" class="secondary" type="button" aria-pressed="false">⏱️ Mod Masa: OFF</button>
+        <button id="sound-toggle" class="secondary" type="button" aria-pressed="true">🔊 Bunyi: ON</button>
+      </div>
+      <div class="bottom">
+        <button id="reset-btn" class="secondary" type="button">↻ Main lagi</button>
+        <button id="eggs-btn" class="secondary" type="button">🥚 Koleksi Easter egg <span id="egg-count">0/8</span></button>
+        <button id="badges-btn" class="secondary" type="button">🏆 Achievement <span id="badge-count">0/3</span></button>
+      </div>
+      <p class="tiny-hint">psst… nombor tertentu menyimpan reaksi rahsia. Cuba menang, kumpul lencana dan jaga streak kamu! 👀</p>
     </section>
   </main>
-  <footer>- dibuat dengan <span class="heart"></span> chat gpt plus - @winter2727b -</footer>
+  <footer>- dibuat dengan <span class="heart">♥</span> · Little Notebook Game -</footer>
 
   <div id="egg-overlay" class="egg-overlay" role="dialog" aria-modal="true" aria-labelledby="egg-title" aria-describedby="egg-desc">
     <section id="egg-card" class="egg-card">
@@ -171,8 +251,54 @@
     </section>
   </div>
 
+  <div id="victory-overlay" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="victory-title" aria-describedby="victory-desc">
+    <section class="modal-card">
+      <div class="trophy" aria-hidden="true">🏆</div>
+      <p class="modal-kicker" id="victory-kicker">round complete</p>
+      <h2 class="modal-title" id="victory-title">KAMU MENANG!</h2>
+      <p class="modal-copy" id="victory-desc">Hebat! Kamu berjaya menemui nombor rahsia.</p>
+      <div id="victory-achievements" class="achievement-preview"></div>
+      <p class="modal-copy" id="victory-egg-note" hidden>Bonus! Nombor ini menyimpan reaksi rahsia 👀</p>
+      <div class="modal-actions">
+        <button id="victory-close" class="secondary" type="button">Tutup</button>
+        <button id="victory-next" class="primary-next" type="button">Pusingan seterusnya ↗</button>
+      </div>
+    </section>
+  </div>
+
+  <div id="collection-overlay" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="collection-title">
+    <section class="modal-card">
+      <p class="modal-kicker">secret notebook</p>
+      <h2 id="collection-title" class="modal-title">🥚 Koleksi Easter Egg</h2>
+      <p id="collection-desc" class="modal-copy">Buka reaksi rahsia dengan memenangi pusingan menggunakan nombor tertentu.</p>
+      <p id="collection-count" class="collection-count">0 daripada 8 ditemui</p>
+      <div id="egg-list" class="collection-grid"></div>
+      <div class="modal-actions"><button id="collection-close" class="secondary" type="button">Tutup koleksi</button></div>
+    </section>
+  </div>
+
+  <div id="badges-overlay" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="badges-title">
+    <section class="modal-card">
+      <p class="modal-kicker">little achievements</p>
+      <h2 id="badges-title" class="modal-title">🏅 Koleksi Achievement</h2>
+      <p class="modal-copy">Kumpul semua tiga lencana ini melalui cara kamu bermain.</p>
+      <p id="badges-count" class="collection-count">0 daripada 3 dibuka</p>
+      <div id="badge-list" class="collection-grid"></div>
+      <div class="modal-actions"><button id="badges-close" class="secondary" type="button">Tutup lencana</button></div>
+    </section>
+  </div>
+
   <script>
     (() => {
+      'use strict';
+      const TIME_LIMIT = 30;
+      const STORAGE_KEYS = {
+        best: 'notebook-number-best',
+        eggs: 'notebook-number-eggs-found',
+        badges: 'notebook-number-achievements',
+        streak: 'notebook-number-winning-streak',
+        sound: 'notebook-number-sound'
+      };
       const easterEggs = {
         7:   { emoji: '⚽🐐', title: 'SIUUUUUU! CR7 🐐', desc: 'Ronaldo buat celebration! Satu stadium terus ikut bersorak.', effect: 'effect-si', confetti: ['⚽', '🐐', '✨', '🙌'] },
         67:  { emoji: '🗣️👐', title: 'SIX SEVENNNN!', desc: '👐👐 SIX SEVENNNN 👐👐 — meme mode activated!', effect: 'effect-sixseven', confetti: ['67', '👐', '💥', '67'] },
@@ -183,38 +309,112 @@
         69:  { emoji: '😂💀', title: 'AYO?!', desc: 'SUS NUMBER DETECTED 💀📸 siapa yang letak nombor ni dalam buku?', effect: '', confetti: ['💀', '📸', '🚨', '😂'] },
         100: { emoji: '💯⚡', title: 'PERFECT SCORE!', desc: 'MAXIMUM POWER! 💯 Full marks untuk tekaan yang legendary.', effect: '', confetti: ['💯', '⚡', '🏆', '🎉'] }
       };
+      const achievementDefs = [
+        { id: 'perfect-guess', emoji: '🎯', title: 'Perfect Guess', desc: 'Menang dengan tekaan pertama sahaja.' },
+        { id: 'lucky-seven', emoji: '🍀', title: 'Lucky 7', desc: 'Menang tepat dalam 7 percubaan.' },
+        { id: 'under-five', emoji: '⚡', title: 'Under 5 Tries', desc: 'Menang dalam kurang daripada 5 percubaan.' }
+      ];
+      const winMessages = [
+        'Otak power! Nombor rahsia berjaya ditemui — teruskan momentum ini!',
+        'Detektif nombor beraksi! Naluri kamu memang tajam hari ini.',
+        'YESSS! Satu lagi kemenangan masuk dalam buku nota legenda kamu.',
+        'Hebat! Strategi kamu menjadi. Boleh pecahkan rekod sendiri pula!'
+      ];
 
-      const form = document.getElementById('guess-form');
-      const input = document.getElementById('guess-input');
-      const message = document.getElementById('message');
-      const attemptsEl = document.getElementById('attempts');
-      const bestEl = document.getElementById('best');
-      const guessesEl = document.getElementById('guesses');
-      const resetBtn = document.getElementById('reset-btn');
-      const overlay = document.getElementById('egg-overlay');
-      const eggCard = document.getElementById('egg-card');
-      const eggNum = document.getElementById('egg-num');
-      const eggEmoji = document.getElementById('egg-emoji');
-      const eggTitle = document.getElementById('egg-title');
-      const eggDesc = document.getElementById('egg-desc');
-      const eggClose = document.getElementById('egg-close');
+      const $ = (id) => document.getElementById(id);
+      const form = $('guess-form');
+      const input = $('guess-input');
+      const message = $('message');
+      const attemptsEl = $('attempts');
+      const bestEl = $('best');
+      const streakEl = $('streak');
+      const guessesEl = $('guesses');
+      const resetBtn = $('reset-btn');
+      const timerToggle = $('timer-toggle');
+      const soundToggle = $('sound-toggle');
+      const timerPanel = $('timer-panel');
+      const timerValue = $('timer-value');
+      const timerProgress = $('timer-progress');
+      const timerNote = $('timer-note');
+      const eggOverlay = $('egg-overlay');
+      const eggCard = $('egg-card');
+      const eggNum = $('egg-num');
+      const eggEmoji = $('egg-emoji');
+      const eggTitle = $('egg-title');
+      const eggDesc = $('egg-desc');
+      const eggClose = $('egg-close');
+      const victoryOverlay = $('victory-overlay');
+      const victoryDesc = $('victory-desc');
+      const victoryAchievements = $('victory-achievements');
+      const victoryEggNote = $('victory-egg-note');
+      const victoryClose = $('victory-close');
+      const victoryNext = $('victory-next');
+      const collectionOverlay = $('collection-overlay');
+      const badgesOverlay = $('badges-overlay');
 
       let secret = makeSecret();
       let attempts = 0;
       let guesses = [];
       let gameOver = false;
-      let best = readBest();
+      let best = readNumber(STORAGE_KEYS.best);
+      let discoveredEggs = new Set(readStoredArray(STORAGE_KEYS.eggs).map(Number).filter((n) => Boolean(easterEggs[n])));
+      let unlockedAchievements = new Set(readStoredArray(STORAGE_KEYS.badges));
+      let currentStreak = readNumber(STORAGE_KEYS.streak) || 0;
       let seenEggs = new Set();
-      bestEl.textContent = best === null ? '—' : best;
+      let pendingEggNumber = null;
+      let timerMode = false;
+      let timerInterval = null;
+      let timerHasStarted = false;
+      let timerEndAt = 0;
+      let timeLeft = TIME_LIMIT;
+      let soundEnabled = readStoredBool(STORAGE_KEYS.sound, true);
+      let audioContext = null;
+
+      bestEl.textContent = best === null ? '—' : String(best);
+      streakEl.textContent = String(currentStreak);
+      updateSoundButton();
+      updateTimerButton();
+      updateTimerPanel();
+      renderGuesses();
+      renderCollections();
 
       function makeSecret() { return Math.floor(Math.random() * 100) + 1; }
-      function readBest() {
-        try { const value = Number(localStorage.getItem('notebook-number-best')); return Number.isFinite(value) && value > 0 ? value : null; }
-        catch (_) { return null; }
+      function readNumber(key) {
+        try {
+          const raw = localStorage.getItem(key);
+          if (raw === null || raw === '') return null;
+          const value = Number(raw);
+          return Number.isFinite(value) && value >= 0 ? value : null;
+        } catch (_) { return null; }
+      }
+      function readStoredArray(key) {
+        try {
+          const value = JSON.parse(localStorage.getItem(key) || '[]');
+          return Array.isArray(value) ? value : [];
+        } catch (_) { return []; }
+      }
+      function readStoredBool(key, fallback) {
+        try {
+          const value = localStorage.getItem(key);
+          return value === null ? fallback : value === 'true';
+        } catch (_) { return fallback; }
+      }
+      function writeStored(key, value) {
+        try { localStorage.setItem(key, typeof value === 'string' ? value : JSON.stringify(value)); }
+        catch (_) { /* The game remains playable if browser storage is disabled. */ }
       }
       function saveBest(value) {
-        best = value; bestEl.textContent = String(value);
-        try { localStorage.setItem('notebook-number-best', String(value)); } catch (_) { /* storage may be unavailable */ }
+        best = value;
+        bestEl.textContent = String(value);
+        writeStored(STORAGE_KEYS.best, String(value));
+      }
+      function saveStreak() {
+        streakEl.textContent = String(currentStreak);
+        writeStored(STORAGE_KEYS.streak, String(currentStreak));
+      }
+      function setMessage(text, type = '') {
+        message.textContent = text;
+        message.className = 'message' + (type ? ' ' + type : '');
       }
       function createGuessChip(guess) {
         const chip = document.createElement('span');
@@ -228,14 +428,11 @@
           guessesEl.textContent = 'Tebakanmu akan muncul di sini ✎';
           return;
         }
-        const fragment = document.createDocumentFragment();
         const label = document.createElement('span');
         label.textContent = 'Sejarah: ';
-        fragment.appendChild(label);
-        guesses.forEach((guess) => fragment.appendChild(createGuessChip(guess)));
-        guessesEl.appendChild(fragment);
+        guessesEl.appendChild(label);
+        guesses.forEach((guess) => guessesEl.appendChild(createGuessChip(guess)));
       }
-      // Append only the latest guess instead of rebuilding the whole history.
       function addGuess(guess) {
         if (guesses.length === 1) {
           guessesEl.replaceChildren();
@@ -245,86 +442,340 @@
         }
         guessesEl.appendChild(createGuessChip(guess));
       }
-      function setMessage(text, type = '') {
-        message.textContent = text;
-        message.className = 'message' + (type ? ' ' + type : '');
-      }
-      function popConfetti(items) {
-        // Keep the effect light on phones and respect reduced-motion settings.
+      function popConfetti(items, amount) {
         if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-        const count = window.matchMedia('(max-width: 520px)').matches ? 6 : 10;
+        const count = amount || (window.matchMedia('(max-width: 520px)').matches ? 12 : 24);
         for (let i = 0; i < count; i++) {
           const bit = document.createElement('span');
           bit.className = 'burst';
           bit.textContent = items[i % items.length];
-          bit.style.left = (20 + Math.random() * 60) + 'vw';
-          bit.style.top = (35 + Math.random() * 30) + 'vh';
-          bit.style.setProperty('--dx', ((Math.random() - .5) * 260) + 'px');
-          bit.style.setProperty('--dy', ((Math.random() - .5) * 240) + 'px');
+          bit.style.left = (8 + Math.random() * 84) + 'vw';
+          bit.style.top = (20 + Math.random() * 55) + 'vh';
+          bit.style.setProperty('--dx', ((Math.random() - .5) * 300) + 'px');
+          bit.style.setProperty('--dy', ((Math.random() - .5) * 280) + 'px');
           document.body.appendChild(bit);
-          window.setTimeout(() => bit.remove(), 1050);
+          window.setTimeout(() => bit.remove(), 1100);
         }
+      }
+
+      // Short synthesized sounds; no external audio files or network are needed.
+      function playTone(frequency, delay, duration, wave = 'sine', volume = 0.055) {
+        if (!soundEnabled) return;
+        try {
+          const AudioCtx = window.AudioContext || window.webkitAudioContext;
+          if (!AudioCtx) return;
+          if (!audioContext) audioContext = new AudioCtx();
+          if (audioContext.state === 'suspended') audioContext.resume();
+          const start = audioContext.currentTime + delay;
+          const oscillator = audioContext.createOscillator();
+          const gain = audioContext.createGain();
+          oscillator.type = wave;
+          oscillator.frequency.setValueAtTime(frequency, start);
+          gain.gain.setValueAtTime(0.0001, start);
+          gain.gain.exponentialRampToValueAtTime(volume, start + 0.018);
+          gain.gain.exponentialRampToValueAtTime(0.0001, start + duration);
+          oscillator.connect(gain);
+          gain.connect(audioContext.destination);
+          oscillator.start(start);
+          oscillator.stop(start + duration + 0.025);
+        } catch (_) { /* Sound is optional; never block the game. */ }
+      }
+      function playSound(type) {
+        if (!soundEnabled) return;
+        if (type === 'wrong') {
+          playTone(260, 0, 0.12, 'triangle', 0.045);
+          playTone(190, 0.11, 0.15, 'triangle', 0.04);
+        } else if (type === 'correct') {
+          playTone(660, 0, 0.13, 'sine', 0.045);
+          playTone(880, 0.10, 0.18, 'sine', 0.045);
+        } else if (type === 'victory') {
+          [[523, 0], [659, .12], [784, .24], [1047, .4]].forEach(([freq, delay]) => playTone(freq, delay, .22, 'sine', .055));
+        } else if (type === 'timeout') {
+          playTone(240, 0, .18, 'square', .035);
+          playTone(170, .18, .25, 'square', .035);
+        }
+      }
+
+      function updateSoundButton() {
+        soundToggle.textContent = soundEnabled ? '🔊 Bunyi: ON' : '🔇 Bunyi: OFF';
+        soundToggle.setAttribute('aria-pressed', String(soundEnabled));
+      }
+      function updateTimerButton() {
+        timerToggle.textContent = timerMode ? '⏱️ Mod Masa: ON' : '⏱️ Mod Masa: OFF';
+        timerToggle.setAttribute('aria-pressed', String(timerMode));
+      }
+      function updateTimerPanel() {
+        timerPanel.hidden = !timerMode;
+        timerValue.textContent = timeLeft + 's';
+        timerProgress.style.width = (timeLeft / TIME_LIMIT * 100) + '%';
+        timerPanel.classList.toggle('urgent', timerMode && timeLeft <= 5 && timerHasStarted && !gameOver);
+        timerNote.textContent = gameOver ? 'Pusingan tamat. Tekan “Main lagi” untuk bermain semula.' : (timerHasStarted ? 'Cepat! Masa terus berjalan selepas tekaan pertama.' : 'Pemasa bermula selepas tekaan pertama yang sah.');
+      }
+      function startTimer() {
+        if (!timerMode || timerHasStarted || gameOver) return;
+        timerHasStarted = true;
+        timerEndAt = Date.now() + TIME_LIMIT * 1000;
+        timerNote.textContent = 'Cepat! Masa terus berjalan selepas tekaan pertama.';
+        timerInterval = window.setInterval(() => {
+          timeLeft = Math.max(0, Math.ceil((timerEndAt - Date.now()) / 1000));
+          updateTimerPanel();
+          if (timeLeft <= 0) {
+            stopTimer();
+            handleTimeout();
+          }
+        }, 150);
+        updateTimerPanel();
+      }
+      function stopTimer() {
+        if (timerInterval !== null) window.clearInterval(timerInterval);
+        timerInterval = null;
+        timerHasStarted = false;
+        timerPanel.classList.remove('urgent');
+      }
+      function handleTimeout() {
+        if (gameOver) return;
+        gameOver = true;
+        currentStreak = 0;
+        saveStreak();
+        setMessage('Masa tamat! Nombor rahsianya ialah ' + secret + '. Cuba lagi untuk bina streak baharu ⏱️', 'hint');
+        playSound('timeout');
+        timerValue.textContent = '0s';
+        timerProgress.style.width = '0%';
+        timerNote.textContent = 'Masa sudah habis. Tekan “Main lagi” untuk cuba semula.';
+        timerPanel.classList.add('urgent');
+      }
+
+      function renderCollections() {
+        const eggTotal = Object.keys(easterEggs).length;
+        $('egg-count').textContent = discoveredEggs.size + '/' + eggTotal;
+        $('badge-count').textContent = unlockedAchievements.size + '/' + achievementDefs.length;
+        $('collection-count').textContent = discoveredEggs.size + ' daripada ' + eggTotal + ' ditemui';
+        $('badges-count').textContent = unlockedAchievements.size + ' daripada ' + achievementDefs.length + ' dibuka';
+
+        const eggList = $('egg-list');
+        eggList.replaceChildren();
+        Object.keys(easterEggs).map(Number).sort((a, b) => a - b).forEach((number) => {
+          const egg = easterEggs[number];
+          const found = discoveredEggs.has(number);
+          const card = document.createElement('article');
+          card.className = 'collection-item' + (found ? ' found' : '');
+          const emoji = document.createElement('span');
+          emoji.className = 'collection-emoji';
+          emoji.textContent = found ? egg.emoji : '🔒';
+          const title = document.createElement('strong');
+          title.textContent = found ? egg.title : 'Reaksi rahsia terkunci';
+          const desc = document.createElement('p');
+          desc.textContent = found ? ('Nombor ' + number + ' · ' + egg.desc) : 'Menang dengan nombor rahsia tertentu untuk membukanya.';
+          card.append(emoji, title, desc);
+          eggList.appendChild(card);
+        });
+
+        const badgeList = $('badge-list');
+        badgeList.replaceChildren();
+        achievementDefs.forEach((badge) => {
+          const found = unlockedAchievements.has(badge.id);
+          const card = document.createElement('article');
+          card.className = 'collection-item' + (found ? ' found' : '');
+          const emoji = document.createElement('span');
+          emoji.className = 'collection-emoji';
+          emoji.textContent = found ? badge.emoji : '🔒';
+          const title = document.createElement('strong');
+          title.textContent = badge.title;
+          const desc = document.createElement('p');
+          desc.textContent = (found ? '✅ Dibuka · ' : 'Belum dibuka · ') + badge.desc;
+          card.append(emoji, title, desc);
+          badgeList.appendChild(card);
+        });
+      }
+      function discoverEgg(number) {
+        if (!easterEggs[number]) return;
+        discoveredEggs.add(number);
+        writeStored(STORAGE_KEYS.eggs, Array.from(discoveredEggs));
+        renderCollections();
+      }
+      function unlockAchievements() {
+        const earnedNow = [];
+        const candidates = [];
+        if (attempts === 1) candidates.push('perfect-guess');
+        if (attempts === 7) candidates.push('lucky-seven');
+        if (attempts < 5) candidates.push('under-five');
+        candidates.forEach((id) => {
+          if (!unlockedAchievements.has(id)) {
+            unlockedAchievements.add(id);
+            earnedNow.push(achievementDefs.find((badge) => badge.id === id));
+          }
+        });
+        writeStored(STORAGE_KEYS.badges, Array.from(unlockedAchievements));
+        renderCollections();
+        return earnedNow;
       }
       function triggerEgg(number) {
         const egg = easterEggs[number];
         if (!egg || seenEggs.has(number)) return;
         seenEggs.add(number);
+        discoverEgg(number);
         eggNum.textContent = 'secret no. ' + String(number).padStart(2, '0');
         eggEmoji.textContent = egg.emoji;
         eggTitle.textContent = egg.title;
         eggDesc.textContent = egg.desc;
         eggCard.className = 'egg-card ' + (egg.effect || '');
-        overlay.classList.add('show');
+        eggOverlay.classList.add('show');
         document.body.classList.add('effect-flash');
         window.setTimeout(() => document.body.classList.remove('effect-flash'), 700);
-        popConfetti(egg.confetti);
+        popConfetti(egg.confetti, 14);
         eggClose.focus();
       }
+      function showPendingEgg() {
+        if (pendingEggNumber === null) return;
+        const number = pendingEggNumber;
+        pendingEggNumber = null;
+        window.setTimeout(() => triggerEgg(number), 180);
+      }
       function closeEgg() {
-        overlay.classList.remove('show');
+        eggOverlay.classList.remove('show');
+        input.focus();
+      }
+      function showVictory(newBadges) {
+        const special = winMessages[Math.floor(Math.random() * winMessages.length)];
+        victoryDesc.textContent = special + ' Nombor ' + secret + ' ditemui dalam ' + attempts + ' percubaan. Winning streak sekarang: ' + currentStreak + ' 🔥';
+        victoryAchievements.replaceChildren();
+        if (newBadges.length) {
+          newBadges.forEach((badge) => {
+            const tag = document.createElement('span');
+            tag.className = 'achievement-tag';
+            tag.textContent = badge.emoji + ' ' + badge.title + ' dibuka!';
+            victoryAchievements.appendChild(tag);
+          });
+        } else {
+          const tag = document.createElement('span');
+          tag.className = 'achievement-tag';
+          tag.textContent = '✨ Terus bermain untuk membuka lencana seterusnya';
+          victoryAchievements.appendChild(tag);
+        }
+        victoryEggNote.hidden = !easterEggs[secret];
+        victoryOverlay.classList.add('show');
+        popConfetti(['🎉', '⭐', '🏆', '✨', '🎊', '🌟'], window.matchMedia('(max-width: 520px)').matches ? 20 : 34);
+        window.setTimeout(() => playSound('victory'), 220);
+        victoryClose.focus();
+      }
+      function winRound() {
+        gameOver = true;
+        stopTimer();
+        updateTimerPanel();
+        setMessage('YESSS! Nombor rahsianya ' + secret + '! Kamu berjaya dalam ' + attempts + ' percubaan 🎉', 'good');
+        if (best === null || attempts < best) saveBest(attempts);
+        currentStreak += 1;
+        saveStreak();
+        const newBadges = unlockAchievements();
+        if (easterEggs[secret]) {
+          pendingEggNumber = secret;
+          discoverEgg(secret);
+        }
+        playSound('correct');
+        showVictory(newBadges);
+      }
+      function closeVictory(openEgg = true) {
+        victoryOverlay.classList.remove('show');
+        if (openEgg) showPendingEgg();
+        else pendingEggNumber = null;
+        input.focus();
+      }
+      function startNewRound({ abandoned = false } = {}) {
+        if (abandoned && !gameOver && (attempts > 0 || timerHasStarted)) {
+          currentStreak = 0;
+          saveStreak();
+        }
+        stopTimer();
+        secret = makeSecret();
+        attempts = 0;
+        guesses = [];
+        gameOver = false;
+        seenEggs = new Set();
+        timeLeft = TIME_LIMIT;
+        input.value = '';
+        attemptsEl.textContent = '0';
+        renderGuesses();
+        setMessage(timerMode ? 'Nombor rahsia baharu! Kamu ada 30 saat selepas tekaan pertama. Jom! ⏱️' : 'Nombor rahsia baharu dah dipilih. Jom cuba lagi!');
+        updateTimerPanel();
         input.focus();
       }
 
       form.addEventListener('submit', (event) => {
         event.preventDefault();
-        if (gameOver) { setMessage('Kamu dah jumpa nombornya! Tekan “Main lagi” untuk pusingan baharu.'); return; }
+        if (gameOver) {
+          setMessage('Pusingan ini dah tamat! Tekan “Main lagi” untuk pusingan baharu.');
+          return;
+        }
         const guess = Number(input.value);
         if (!Number.isInteger(guess) || guess < 1 || guess > 100) {
-          setMessage('Oops! Masukkan nombor bulat dari 1 hingga 100 ya ✎', 'hint'); input.focus(); return;
+          setMessage('Oops! Masukkan nombor bulat dari 1 hingga 100 ya ✎', 'hint');
+          input.focus();
+          return;
         }
         if (guesses.includes(guess)) {
-          setMessage('Nombor ' + guess + ' dah pernah diteka. Cuba nombor lain!'); input.select(); return;
+          setMessage('Nombor ' + guess + ' dah pernah diteka. Cuba nombor lain!');
+          input.select();
+          return;
         }
-        attempts++;
+        startTimer();
+        attempts += 1;
         guesses.push(guess);
         attemptsEl.textContent = String(attempts);
         addGuess(guess);
 
         if (guess === secret) {
-          gameOver = true;
-          setMessage('YESSS! Nombor rahsianya ' + secret + '! Kamu berjaya dalam ' + attempts + ' percubaan 🎉', 'good');
-          if (best === null || attempts < best) saveBest(attempts);
-          // Easter egg hanya muncul jika nombor yang diteka betul-betul nombor rahsia.
-          triggerEgg(secret);
-        } else if (guess < secret) {
-          setMessage('Terlalu kecil! Cuba nombor yang lebih tinggi ↑', 'hint');
+          winRound();
         } else {
-          setMessage('Terlalu besar! Cuba nombor yang lebih rendah ↓', 'hint');
+          playSound('wrong');
+          if (guess < secret) setMessage('Terlalu kecil! Cuba nombor yang lebih tinggi ↑', 'hint');
+          else setMessage('Terlalu besar! Cuba nombor yang lebih rendah ↓', 'hint');
         }
         input.value = '';
-        if (!overlay.classList.contains('show')) input.focus();
+        if (!victoryOverlay.classList.contains('show') && !eggOverlay.classList.contains('show')) input.focus();
       });
 
-      resetBtn.addEventListener('click', () => {
-        secret = makeSecret(); attempts = 0; guesses = []; gameOver = false; seenEggs = new Set();
-        attemptsEl.textContent = '0'; renderGuesses();
-        setMessage('Nombor rahsia baharu dah dipilih. Jom cuba lagi!');
-        input.value = ''; input.focus();
+      resetBtn.addEventListener('click', () => startNewRound({ abandoned: true }));
+      timerToggle.addEventListener('click', () => {
+        if (!gameOver && (attempts > 0 || timerHasStarted)) {
+          setMessage('Mod masa hanya boleh ditukar antara pusingan. Tekan “Main lagi” dahulu ya.');
+          return;
+        }
+        timerMode = !timerMode;
+        timeLeft = TIME_LIMIT;
+        updateTimerButton();
+        updateTimerPanel();
+        setMessage(timerMode ? 'Mod masa diaktifkan! Kamu ada 30 saat selepas tekaan pertama. ⏱️' : 'Mod masa dimatikan. Main ikut rentak sendiri!');
       });
+      soundToggle.addEventListener('click', () => {
+        soundEnabled = !soundEnabled;
+        writeStored(STORAGE_KEYS.sound, String(soundEnabled));
+        updateSoundButton();
+        if (soundEnabled) playSound('correct');
+      });
+      $('eggs-btn').addEventListener('click', () => { renderCollections(); collectionOverlay.classList.add('show'); $('collection-close').focus(); });
+      $('badges-btn').addEventListener('click', () => { renderCollections(); badgesOverlay.classList.add('show'); $('badges-close').focus(); });
+      $('collection-close').addEventListener('click', () => { collectionOverlay.classList.remove('show'); input.focus(); });
+      $('badges-close').addEventListener('click', () => { badgesOverlay.classList.remove('show'); input.focus(); });
       eggClose.addEventListener('click', closeEgg);
-      overlay.addEventListener('click', (event) => { if (event.target === overlay) closeEgg(); });
-      document.addEventListener('keydown', (event) => { if (event.key === 'Escape' && overlay.classList.contains('show')) closeEgg(); });
-      renderGuesses();
+      eggOverlay.addEventListener('click', (event) => { if (event.target === eggOverlay) closeEgg(); });
+      victoryClose.addEventListener('click', () => closeVictory(true));
+      victoryNext.addEventListener('click', () => {
+        const eggNumber = pendingEggNumber;
+        pendingEggNumber = null;
+        victoryOverlay.classList.remove('show');
+        startNewRound();
+        if (eggNumber !== null) window.setTimeout(() => triggerEgg(eggNumber), 180);
+      });
+      victoryOverlay.addEventListener('click', (event) => { if (event.target === victoryOverlay) closeVictory(true); });
+      collectionOverlay.addEventListener('click', (event) => { if (event.target === collectionOverlay) collectionOverlay.classList.remove('show'); });
+      badgesOverlay.addEventListener('click', (event) => { if (event.target === badgesOverlay) badgesOverlay.classList.remove('show'); });
+      document.addEventListener('keydown', (event) => {
+        if (event.key !== 'Escape') return;
+        if (eggOverlay.classList.contains('show')) closeEgg();
+        else if (victoryOverlay.classList.contains('show')) closeVictory(true);
+        else if (collectionOverlay.classList.contains('show')) collectionOverlay.classList.remove('show');
+        else if (badgesOverlay.classList.contains('show')) badgesOverlay.classList.remove('show');
+      });
     })();
   </script>
 </body>
